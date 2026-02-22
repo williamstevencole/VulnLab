@@ -1,43 +1,56 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Share2, Repeat2, Send } from 'lucide-react';
 
-const Post = ({ id, username, content, date, comment_count, profile_color, currentUser }) => {
+const Post = ({ id, username, content, date, comment_count, profile_color, currentUser, isSecure, token }) => {
   const [comments, setComments] = useState([]);
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Secure backend runs on 3000
   const API_URL = `http://${window.location.hostname}:3000`;
 
   const fetchComments = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/posts/${id}/comments`);
+      const headers = isSecure ? { 'Authorization': `Bearer ${token}` } : {};
+      const res = await fetch(`${API_URL}/posts/${id}/comments`, { headers });
       const data = await res.json();
       setComments(data);
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error("Error fetching comments:", err); }
     setLoading(false);
   };
 
   const toggleComments = () => {
-    if (!showComments && comments.length === 0) fetchComments();
+    if (!showComments) fetchComments();
     setShowComments(!showComments);
   };
 
   const handlePostComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+    
     try {
-      const res = await fetch(`${API_URL}/comments`, {
+      const headers = { 'Content-Type': 'application/json' };
+      if (isSecure) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch(`${API_URL}/posts/comments`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ post_id: id, user_id: currentUser.id, comment_text: newComment })
+        headers,
+        body: JSON.stringify({ 
+          post_id: id, 
+          user_id: currentUser.id, 
+          comment_text: newComment 
+        })
       });
+      
       if (res.ok) {
         setNewComment('');
         fetchComments();
+      } else {
+        console.error("Failed to post comment");
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error("Network error while posting comment:", err); }
   };
 
   return (

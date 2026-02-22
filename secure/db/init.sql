@@ -41,7 +41,7 @@ DECLARE
     p_id INTEGER;
     i INTEGER;
     usernames TEXT[] := ARRAY['admin_sys', 'sarah_j', 'mike_dev', 'crypto_king', 'chef_mario', 'sec_guru', 'gamer_pro', 'jane_d', 'john_s', 'alice_w', 'bob_b', 'charlie_b', 'david_b', 'eve_h', 'frank_s', 'grace_h', 'harry_p', 'isabel_a', 'jack_s', 'katherine_j', 'larry_p', 'marie_c', 'nikola_t', 'oprah_w', 'pablo_p', 'quentin_t', 'rosa_p', 'steve_j', 'thomas_e', 'ursula_l', 'vincent_v', 'walt_d', 'xena_w', 'yoda_m', 'linus_t', 'ada_l', 'alan_t', 'bill_g', 'mark_z', 'jeff_b', 'elon_m', 'tim_c', 'satya_n', 'sundar_p'];
-    passwords TEXT[] := ARRAY['password123', 'qwerty', '123456', 'letmein', 'admin123', 'welcome', 'godmode', 'secret', 'password', 'hunter2', 'ninja', 'football', 'baseball', 'monkey', 'dragon', 'shadow', 'superman', 'batman', 'starwars'];
+    passwords TEXT[] := ARRAY['Tr0ub4dor&3', 'password123', 'qwerty', '123456', 'letmein', 'admin123', 'welcome', 'godmode', 'secret', 'password', 'hunter2', 'ninja', 'football', 'baseball', 'monkey', 'dragon', 'shadow', 'superman', 'batman', 'starwars'];
     colors TEXT[] := ARRAY['#1d9bf0', '#f4212e', '#ffad1f', '#17bf63', '#794bc4', '#e0245e', '#00ba7c', '#ff7a00'];
     post_contents TEXT[] := ARRAY[
         'Just setting up my vuln-twitter.',

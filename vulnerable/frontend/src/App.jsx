@@ -28,7 +28,7 @@ function App() {
       const [pRes, uRes, sRes] = await Promise.all([
         fetch(`${API_URL}/posts`),
         fetch(`${API_URL}/users`),
-        fetch(`${API_URL}/stats`)
+        fetch(`${API_URL}/users/stats`)
       ])
       setPosts(await pRes.json())
       setUsersList(await uRes.json())

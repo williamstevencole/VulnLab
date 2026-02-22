@@ -24,15 +24,23 @@ router.post('/login', loginLimiter, async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { username } });
 
-    // FIX: User Enumeration - Use generic error message
     if (!user) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Check if password matches via Bcrypt OR plain text (for demo seed data compatibility)
+    let isMatch = false;
+    try {
+      isMatch = await bcrypt.compare(password, user.password);
+    } catch (e) {
+      isMatch = (password === user.password);
+    }
+
+    if (!isMatch && password === user.password) {
+      isMatch = true;
+    }
 
     if (isMatch) {
-      // FIX: Broken Authentication - Generate JWT
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
         process.env.JWT_SECRET || 'fallback_secret',
@@ -45,7 +53,7 @@ router.post('/login', loginLimiter, async (req, res) => {
       res.status(401).json({ message: 'Invalid username or password' });
     }
   } catch (err) {
-    res.status(400).json({ message: 'Bad request' });
+    res.status(400).json({ message: 'Bad request or validation error' });
   }
 });
 
