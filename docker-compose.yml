@@ -9,7 +9,6 @@ services:
       POSTGRES_DB: pentest_db
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    # Port 5432 is NOT exposed to host to force using the SQLi vulnerability
 
   backend:
     build: ./backend
