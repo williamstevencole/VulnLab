@@ -1,9 +1,3 @@
-¡Excelente iniciativa! He actualizado tu manual para que refleje exactamente los cambios que implementamos en el laboratorio: el nuevo esquema `pentest_lab`, el usuario real `admin_sys` y los parámetros de red que te funcionaron mejor (como el `--delay` para evitar bloqueos).
-
-Aquí tienes el **README.md** listo para copiar y usar en tu repositorio:
-
----
-
 # Laboratorio de Pentesting: De la Red a la Base de Datos
 
 Este manual detalla el proceso completo para preparar, descubrir, escanear y explotar la vulnerabilidad de SQL Injection en **VulnLab**.
