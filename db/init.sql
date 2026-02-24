@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS pentest_lab;
+SET search_path to pentest_lab;
+
 -- 1. Users Table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,

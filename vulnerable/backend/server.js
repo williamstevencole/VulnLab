@@ -14,7 +14,7 @@ app.use('/', authRoutes); // Login & Signup
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
 
-const PORT = 3000;
+const PORT = 8080;
 app.listen(PORT, () => {
   console.log(`Vulnerable Backend running on port ${PORT}`);
 });

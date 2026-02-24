@@ -8,7 +8,7 @@ const Post = ({ id, username, content, date, comment_count, profile_color, curre
   const [loading, setLoading] = useState(false);
 
   // FIXED: Correcting the backend URL to use the vulnerable backend port
-  const API_URL = `http://${window.location.hostname}:3000`;
+  const API_URL = `http://${window.location.hostname}:8080`;
 
   const fetchComments = async () => {
     setLoading(true);

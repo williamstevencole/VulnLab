@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
     if (result.rows.length > 0) {
       res.json({ success: true, user: result.rows[0] });
     } else {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
+      res.status(501).json({ success: false, message: 'Unauthorized' });
     }
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

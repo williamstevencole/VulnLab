@@ -17,7 +17,7 @@ function App() {
   const [formData, setFormData] = useState({ username: '', password: '', email: '' })
   const [newPostContent, setNewPostContent] = useState('')
 
-  const API_URL = `http://${window.location.hostname}:3000`
+  const API_URL = `http://${window.location.hostname}:8080`
 
   useEffect(() => {
     if (user) fetchData()

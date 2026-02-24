@@ -6,7 +6,7 @@ const ProfileView = ({ user, setView, currentUser }) => {
   const [userPosts, setUserPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = `http://${window.location.hostname}:3000`;
+  const API_URL = `http://${window.location.hostname}:8080`;
 
   useEffect(() => {
     if (user) {

