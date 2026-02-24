@@ -16,7 +16,7 @@ sudo systemctl enable docker
 
 **2. Clonar el Repositorio:**
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/williamstevencole/VulnLab.git
 cd PENTESTING
 ```
 
