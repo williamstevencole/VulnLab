@@ -15,5 +15,5 @@ COPY . .
 # Generate Prisma Client
 RUN npx prisma generate
 
-EXPOSE 3000
+EXPOSE 8080
 CMD ["node", "server.js"]

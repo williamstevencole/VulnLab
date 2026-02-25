@@ -52,7 +52,7 @@ Identifica qué máquinas están activas en tu red local para encontrar el servi
 
 ```bash
 # Sustituye por tu rango de red (ej. 192.168.88.0/24 o 10.40.118.0/24)
-sudo nmap -sn 192.168.88.0/24
+sudo nmap 192.168.88.0/24
 
 ```
 

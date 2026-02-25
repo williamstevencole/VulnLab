@@ -19,7 +19,7 @@ function App() {
   const [newPostContent, setNewPostContent] = useState('')
 
   // Secure backend now runs on 3000 (uniform)
-  const API_URL = `http://${window.location.hostname}:3000`
+  const API_URL = `http://${window.location.hostname}:8080`
 
   useEffect(() => {
     if (user && token) fetchData()
