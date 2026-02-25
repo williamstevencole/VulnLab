@@ -1,7 +1,5 @@
 # Laboratorio de Pentesting: De la Red a la Base de Datos
 
-Este manual detalla el proceso completo para preparar, descubrir, escanear y explotar la vulnerabilidad de SQL Injection en **VulnLab**.
-
 ## 0. Configuración del Entorno (ParrotOS / Kali)
 
 Antes de comenzar, instala las herramientas necesarias y descarga el laboratorio.
@@ -128,7 +126,4 @@ sqlmap -u "http://<IP_OBJETIVO>:8080/login" \
   -p username --dbms postgres --sql-shell
 
 ```
-* **Consultas Parametrizadas:** (Uso de `$1`, `$2` en lugar de variables directas).
-* **Esquemas Seguros:** Separación lógica de datos en PostgreSQL.
-* **Hashing:** Las contraseñas en el entorno seguro no son legibles (Bcrypt).
 
