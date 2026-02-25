@@ -128,22 +128,6 @@ sqlmap -u "http://<IP_OBJETIVO>:8080/login" \
   -p username --dbms postgres --sql-shell
 
 ```
-
----
-
-## 6. El Desafío Final (Capture The Flag)
-
-1. **Identificación:** Encuentra la IP del instructor mediante `nmap`.
-2. **Exfiltración:** Extrae la tabla de usuarios y encuentra la contraseña de `admin_sys`.
-3. **Investigación:** ¿Cuál es el contenido del post de `elon_m`? (Usa la `sql-shell` o el flag `-T posts --dump`).
-4. **Bypass:** Intenta entrar al sitio web sin usar `sqlmap`, ingresando `admin_sys' --` en el campo de usuario del navegador.
-
----
-
-## 7. Comparación de Seguridad (Mitigación)
-
-El código vulnerable concatena strings directamente. La solución implementada en la carpeta `secure/` utiliza:
-
 * **Consultas Parametrizadas:** (Uso de `$1`, `$2` en lugar de variables directas).
 * **Esquemas Seguros:** Separación lógica de datos en PostgreSQL.
 * **Hashing:** Las contraseñas en el entorno seguro no son legibles (Bcrypt).
